@@ -43,7 +43,10 @@ cronometro({
   }
 }, {
   errorThreshold: 0,
-  iterations: 100_000
+  iterations: 1_000_000,
+  print: {
+    colors: false
+  }
 }, (err, results) => {
   if (err) {
     throw err
