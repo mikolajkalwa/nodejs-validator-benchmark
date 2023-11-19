@@ -1,9 +1,9 @@
-import { user } from './src/fixture.js'
-import * as ajv from './src/schemas/ajv.js'
-import * as joi from './src/schemas/joi.js'
-import * as myzod from './src/schemas/myzod.js'
-import * as yup from './src/schemas/yup.js'
-import * as zod from './src/schemas/zod.js'
+import { user } from './fixture.js'
+import * as ajv from './schemas/ajv.js'
+import * as joi from './schemas/joi.js'
+import * as myzod from './schemas/myzod.js'
+import * as yup from './schemas/yup.js'
+import * as zod from './schemas/zod.js'
 
 console.log('ajv base', ajv.baseSchema(user))
 console.log('ajv details', ajv.detailsSchema(user))
