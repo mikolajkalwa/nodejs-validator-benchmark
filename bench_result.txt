@@ -1,7 +1,7 @@
 ╔═════════════════════════╤═════════╤════════════════════╤═══════════╗
 ║ Slower tests            │ Samples │             Result │ Tolerance ║
 ╟─────────────────────────┼─────────┼────────────────────┼───────────╢
-║ yup - full validaiton   │ 1000000 │    91264.88 op/sec │  ± 0.06 % ║
+║ yup - full validation   │ 1000000 │    91264.88 op/sec │  ± 0.06 % ║
 ║ joi - full validation   │ 1000000 │   114094.37 op/sec │  ± 0.03 % ║
 ║ yup - types only        │ 1000000 │   121955.75 op/sec │  ± 0.07 % ║
 ║ myzod - full validation │ 1000000 │   349402.00 op/sec │  ± 0.05 % ║
@@ -199,7 +199,7 @@
     },
     "standardError": 5.627020911297702
   },
-  "yup - full validaiton": {
+  "yup - full validation": {
     "success": true,
     "size": 1000000,
     "min": 10291,

@@ -31,7 +31,7 @@ cronometro({
   'yup - types only': function () {
     yup.baseSchema.validateSync(user)
   },
-  'yup - full validaiton': function () {
+  'yup - full validation': function () {
     yup.detailsSchema.validateSync(user)
   },
 
