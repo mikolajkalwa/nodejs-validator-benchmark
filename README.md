@@ -68,3 +68,10 @@ Cronometro outputs summarized tests results in a table. More details can be obta
 | ajv - types only        | 1000000     | 16725654.71 op/sec | ± 0.57 %      |
 
 ![Time to validate an object](validator_benchmark_result.svg)
+
+In case of only validating the object structure myzod is almost 5 times faster than Joi and almost 3 times faster than zod. However in case of full validation myzod is 3 times faster than Joi and about 1.5 times slower than zod. I know that in this case I've checked performance of validator library, not myzod itself, but as I mentioned earlier, myzod doesn't include sophisitace validation methods out of the box. The results may change if there's a faster alternative to the validator library.  
+Ajv turned to be the fastest to validate object structure, it's over 8 times faster than myzod, and over 23 times faster than zod. In case of full content validation Ajv is about 2.5 times faster than zod.
+
+### Conclusions
+Myzod is fast, however the results mentioned in the library readme doesn't met the reality. Today (end of November 2023) myzod is only 3 times faster than zod when validation object structure only. When it comes to the actual validation myzod with combination of validator was slower than zod itself. This results suggests that zod got a lof faster over the last 3 years (results mention in myzod repo were added there in April 2020). 
+Should you use the fastest library? It depends... If your application needs to process thousands of requests per second, I'd use Ajv. In other cased zod is my preffered solution as it integrates very nicely with Typescript ecosystem. Having types generated based on validation schema helps to avoid unecessay code duplication within a project. You only need to modify the object schema, and types are getting automatically changed as well.
