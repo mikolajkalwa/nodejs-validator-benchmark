@@ -53,20 +53,32 @@ Implementation can be found in [Github Repository](https://github.com/mikolajkal
 ### Results
 Cronometro outputs summarized tests results in a table. More details can be obtained from the results object using the API. Since the benchmark included 1 000 000 samples and results were quite stable (worst case tolerance was ± 0.57 %), I'll focus on average time needed to validate an object.
 
+#### Types only validation
+
 | **Slower tests**        | **Samples** | **Result**         | **Tolerance** |
 |-------------------------|-------------|--------------------|---------------|
-| yup - full validation   | 1000000     | 191264.88 op/sec   | ± 0.06 %      |
-| joi - full validation   | 1000000     | 114094.37 op/sec   | ± 0.03 %      |
 | yup - types only        | 1000000     | 121955.75 op/sec   | ± 0.07 %      |
-| myzod - full validation | 1000000     | 349402.00 op/sec   | ± 0.05 %      |
 | joi - types only        | 1000000     | 418926.55 op/sec   | ± 0.10 %      |
-| zod - full validation   | 1000000     | 566331.74 op/sec   | ± 0.10 %      |
 | zod - types only        | 1000000     | 734834.53 op/sec   | ± 0.12 %      |
-| ajv - full validation   | 1000000     | 1417494.11 op/sec  | ± 0.12 %      |
 | myzod - types only      | 1000000     | 2060232.36 op/sec  | ± 0.07 %      |
 | **Fastest test**        | **Samples** | **Result**         | **Tolerance** |
 | ajv - types only        | 1000000     | 16725654.71 op/sec | ± 0.57 %      |
 
+**Insert plot here**
+
+#### Full content validation
+
+| **Slower tests**        | **Samples** | **Result**         | **Tolerance** |
+|-------------------------|-------------|--------------------|---------------|
+| yup - full validation   | 1000000     | 191264.88 op/sec   | ± 0.06 %      |
+| joi - full validation   | 1000000     | 114094.37 op/sec   | ± 0.03 %      |
+| myzod - full validation | 1000000     | 349402.00 op/sec   | ± 0.05 %      |
+| zod - full validation   | 1000000     | 566331.74 op/sec   | ± 0.10 %      |
+| ajv - full validation   | 1000000     | 1417494.11 op/sec  | ± 0.12 %      |
+| **Fastest test**        | **Samples** | **Result**         | **Tolerance** |
+| ajv - full validation   | 1000000     | 1417494.11 op/sec  | ± 0.12 %      |
+
+**Edit the plot to include full object validation only**
 ![Time to validate an object](validator_benchmark_result.svg)
 
 In case of only validating the object structure myzod is almost 5 times faster than Joi and almost 3 times faster than zod. However in case of full validation myzod is 3 times faster than Joi and about 1.5 times slower than zod. I know that in this case I've checked performance of validator library, not myzod itself, but as I mentioned earlier, myzod doesn't include sophisitace validation methods out of the box. The results may change if there's a faster alternative to the validator library.  
