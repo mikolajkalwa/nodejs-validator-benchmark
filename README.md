@@ -46,42 +46,41 @@ In `full validation` scenario it is additionaly checked if:
 * `organization_id` included valid UUID,
 * `requested_at` contains datetime satisfying ISO 8601 norm. 
 
-All benchmarks were performed on MacBook Pro, using Node 20.9.0.  
+All benchmarks were performed on MacBook Pro, using Node 20.10.0. 
 Implementation can be found in [Github Repository](https://github.com/mikolajkalwa/nodejs-validator-benchmark). 
 
 
 ### Results
-Cronometro outputs summarized tests results in a table. More details can be obtained from the results object using the API. Since the benchmark included 1 000 000 samples and results were quite stable (worst case tolerance was ± 0.57 %), I'll focus on average time needed to validate an object.
+Cronometro outputs summarized tests results in a table. More details can be obtained from the results object using the API. Since the benchmark included 10 000 000 samples and results were quite stable (worst case tolerance was ± 0.14 %), I'll focus on average time needed to validate an object.
 
 #### Types only validation
 
-| **Slower tests**        | **Samples** | **Result**         | **Tolerance** |
-|-------------------------|-------------|--------------------|---------------|
-| yup         | 1000000     | 121955.75 op/sec   | ± 0.07 %      |
-| joi         | 1000000     | 418926.55 op/sec   | ± 0.10 %      |
-| zod         | 1000000     | 734834.53 op/sec   | ± 0.12 %      |
-| myzod      | 1000000     | 2060232.36 op/sec  | ± 0.07 %      |
-| **Fastest test**        | **Samples** | **Result**         | **Tolerance** |
-| ajv        | 1000000     | 16725654.71 op/sec | ± 0.57 %      |
+| **Slower tests** | **Samples** | **Result**        | **Tolerance** |
+|------------------|-------------|-------------------|---------------|
+| yup              | 10000000    | 120386.86 op/sec  | ± 0.02 %      |
+| joi              | 10000000    | 416051.57 op/sec  | ± 0.05 %      |
+| zod              | 10000000    | 1177593.99 op/sec | ± 0.07 %      |
+| myzod            | 10000000    | 3419450.10 op/sec | ± 0.02 %      |
+| **Fastest test** | **Samples** | **Result**        | **Tolerance** |
+| ajv              | 10000000    | 1712090.05 op/sec | ± 0.14 %      |
 
-![Time to validate an object](types-only.svg)
+![Time to validate an object](results/types-only.svg)
 
 #### Full content validation
 
-| **Slower tests**        | **Samples** | **Result**         | **Tolerance** |
-|-------------------------|-------------|--------------------|---------------|
-| yup   | 1000000     | 191264.88 op/sec   | ± 0.06 %      |
-| joi   | 1000000     | 114094.37 op/sec   | ± 0.03 %      |
-| myzod  | 1000000     | 349402.00 op/sec   | ± 0.05 %      |
-| zod    | 1000000     | 566331.74 op/sec   | ± 0.10 %      |
-| ajv    | 1000000     | 1417494.11 op/sec  | ± 0.12 %      |
-| **Fastest test**        | **Samples** | **Result**         | **Tolerance** |
-| ajv    | 1000000     | 1417494.11 op/sec  | ± 0.12 %      |
+| **Slower tests** | **Samples** | **Result**        | **Tolerance** |
+|------------------|-------------|-------------------|---------------|
+| yup              | 10000000    | 92300.85 op/sec   | ± 0.02 %      |
+| joi              | 10000000    | 115841.40 op/sec  | ± 0.01 %      |
+| myzod            | 10000000    | 497036.08 op/sec  | ± 0.02 %      |
+| zod              | 10000000    | 834602.92 op/sec  | ± 0.06 %      |
+| **Fastest test** | **Samples** | **Result**        | **Tolerance** |
+| ajv              | 10000000    | 1712090.05 op/sec | ± 0.06 %      |
 
-![Time to validate an object](comprehensive-validation.svg)
+![Time to validate an object](results/comprehensive-validation.svg)
 
-In case of only validating the object structure myzod is almost 5 times faster than Joi and almost 3 times faster than zod. However in case of full validation myzod is 3 times faster than Joi and about 1.5 times slower than zod. I know that in this case I've checked performance of validator library, not myzod itself, but as I mentioned earlier, myzod doesn't include sophisitace validation methods out of the box. The results may change if there's a faster alternative to the validator library.  
-Ajv turned to be the fastest to validate object structure, it's over 8 times faster than myzod, and over 23 times faster than zod. In case of full content validation Ajv is about 2.5 times faster than zod.
+In case of only validating the object structure myzod is about 8 times faster than Joi and almost 3 times faster than zod. However in case of full validation myzod is 4 times faster than Joi and about 2 times slower than zod. I know that in this case I've checked performance of validator library, not myzod itself, but as I mentioned earlier, myzod doesn't include sophisitace validation methods out of the box. The results may change if there's a faster alternative to the validator library.  
+Ajv turned to be the fastest to validate object structure, it's almost 5 times faster than myzod, and over 14 times faster than zod. In case of full content validation Ajv is about 2 times faster than zod.
 
 ### Conclusions
 Myzod is fast, however the results mentioned in the library readme doesn't met the reality. Today (end of November 2023) myzod is only 3 times faster than zod when validation object structure only. When it comes to the actual validation myzod with combination of validator was slower than zod itself. This results suggests that zod got a lof faster over the last 3 years (results mention in myzod repo were added there in April 2020). 
