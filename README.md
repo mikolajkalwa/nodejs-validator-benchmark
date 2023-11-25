@@ -1,10 +1,9 @@
 # Validators benchmark
 
 ### Intro
-Validating user input is one of the most common actions that all systems do behind the scenes. Verifying if user's provided input matches the business requirements is crucial to ensure correct operations of given software. 
-During my career, I've been working with multiple libraries - all serve a similar purpose - validate if input date matches required criteria. 
-A few years ago, I participated in a project which was using a library called myzod. By that time, I already knew zod, but I had never heard of myzod. I've quickly looked it up on npmjs and GitHub. This was one of the niche libraries with only one active maintainer, with a little over 100 stars and a couple of thousands of downloads monthly. The choice of this library surprised me, as alternatives seemed to be more popular and stable. I've asked team members what were the reasons for choosing this particular library - performance, they said. In the readme file, myzod authors states that their solution is about 25 times faster than zod and 6 times faster than Joi (benchmarks were performed on Node 13). 
-As of today (November 2023) Node 20, is the LTS version, zod and joi are being actively developed when myzod seems to be not, I've decided to perform my own benchmarks to check if myzod is really that much faster. 
+It is crucial to verify that the user's input matches the business requirements. Validating input data is one of the most common tasks that all software performs in the background.
+During my career, I've worked with multiple libraries, all of which serve a similar purpose:  validate if input matches the required criteria.  
+A few years ago, I worked on a project that used a library called myzod. I knew zod by that time, but I had never heard of myzod. I looked it up on npmjs and GitHub. This was a small library, with only one person keeping it up-to-date. It had over 100 stars and thousands of downloads every month. I was surprised that this library was chosen because other options seemed more popular and stable. I've asked the team members why they picked this particular library — it's for performance, they said. Author of myzod states that their solution is about 25 times faster than zod and 6 times faster than Joi. They tested it on Node 13. As of today (November 2023), Node 20 is the latest LTS version of Node.js. Zod and Joi are being actively developed when myzod seems to be not. I've decided to perform my benchmarks to check if myzod is still that much faster. 
 
 ### Tested libraries
 * [ajv](https://www.npmjs.com/package/ajv/v/8.12.0) (with [ajv-formats](https://www.npmjs.com/package/ajv-formats/v/2.1.1))
@@ -13,14 +12,15 @@ As of today (November 2023) Node 20, is the LTS version, zod and joi are being a
 * [zod](https://www.npmjs.com/package/zod/v/3.22.4)
 * [myzod](https://www.npmjs.com/package/myzod/v/1.10.2) (with [validator](https://www.npmjs.com/package/validator/v/13.11.0))
 
-One note on myzod library - it doesn't have refined string validations built-in. According to the authors: "Myzod is not interested in reimplementing all possible string validations, i.e. isUUID, isEmail, isAlphaNumeric, etc. The myzod string validation can be easily extended via the withPredicate API.". In examples, they use https://www.npmjs.com/package/validator, thus this library is used in the implemented benchmarks.
+One note about the myzod library - it does not have refined string validation built-in: "Myzod is not interested in reimplementing all possible string validations, i.e. isUUID, isEmail, isAlphaNumeric, etc. The myzod string validation can be easily extended via the withPredicate API.". Implemented benchmarks use [validator](https://www.npmjs.com/package/validator) library because it is used in myzod examples.
 
 ### Benchmark implementation
-I've decided to check two variants:
-1. Validating only the object structure without validation of the actual content (similar to benchmarks implemented by myzod team).
-2. A bit more realistic example in which all actual content is checked against provided criteria.
+Two variants were checked:
+1. Validating only the object structure without verifying the actual content (similar to the benchmarks implemented by the myzod team).
+2. All actual content is checked against the provided criteria in a more realistic example.
 
-For the benchmarks, I've decided to use a tool created by Paolo Insogna - cronometro. https://github.com/ShogunPanda/cronometro
+All of the benchmarks were done on a 2020 MacBook Pro with the Apple M1 Chip using Node 20.10.0 and a tool made by Paolo Insogna, [Cronometro](https://www.npmjs.com/package/cronometro/v/1.2.0).
+The implementation can be found in the [GitHub repository](https://github.com/mikolajkalwa/nodejs-validator-benchmark).
 
 #### Tested object
 ```js
@@ -37,8 +37,8 @@ export const user = {
   requested_at: '2023-11-18T19:05:46.760Z'
 }
 ```
-In the `types only` scenario, only object structure is checked (all properties are required) + all the end fields need to be of type `string`.  
-In `full validation` scenario, it is additionally checked if: 
+In a `types only` scenario, only the object structure is checked and all the end fields need to be of type `string`.
+In `comprehensive validation` scenario, it is additionally checked if: 
 * `first` name length is between 1 and 999 characters,
 * `last` name length is between 1 and 999 characters,
 * `email` contains valid email address,
@@ -46,11 +46,8 @@ In `full validation` scenario, it is additionally checked if:
 * `organization_id` included valid UUID,
 * `requested_at` contains date time satisfying ISO 8601 norm. 
 
-All benchmarks were performed on a MacBook Pro, using Node 20.10.0. 
-The implementation can be found in [GitHub Repository](https://github.com/mikolajkalwa/nodejs-validator-benchmark). 
-
 ### Results
-Cronometro outputs summarized tests results in a table. More details can be obtained from the results object using the API. Since the benchmark included 10 000 000 samples and results were quite stable (worst-case tolerance was ± 0.14 %), I'll focus on the average time needed to validate an object.
+Cronometro outputs summarized test results in a table. More details can be obtained from the results object using the API. Since the benchmark included 10 000 000 samples and the results were quite stable (worst-case tolerance was ± 0.14 %), I'll focus on the average time needed to validate an object.
 
 #### Types only validation
 
@@ -65,7 +62,7 @@ Cronometro outputs summarized tests results in a table. More details can be obta
 
 ![Time to validate an object](results/types-only.svg)
 
-#### Full content validation
+#### Comprehensive validation
 
 | **Slower tests** | **Samples** | **Result**        | **Tolerance** |
 |------------------|-------------|-------------------|---------------|
@@ -78,9 +75,9 @@ Cronometro outputs summarized tests results in a table. More details can be obta
 
 ![Time to validate an object](results/comprehensive-validation.svg)
 
-In the case of only validating the object structure, myzod is about 8 times faster than Joi and almost 3 times faster than zod. However, in case of full validation, myzod is 4 times faster than Joi and about 2 times slower than zod. I know that in this case I've checked the performance of the validator library, not myzod itself, but as I mentioned earlier, myzod doesn't include sophisticated validation methods out of the box. The results may change if there's a faster alternative to the validator library.  
-Ajv turned to be the fastest to validate object structure, it's almost 5 times faster than myzod, and over 14 times faster than zod. In the case of full content validation, Ajv is about 2 times faster than zod.
+In the case of only validating the object structure, myzod is about 8 times faster than Joi and almost 3 times faster than zod. However, in case of comprehensive validation, myzod is 4 times faster than Joi and about 2 times slower than zod. I understand that the performance of the validator library greatly influenced the results of this test, but as I mentioned earlier, myzod does not include sophisticated validation methods out of the box.  
+Ajv turned to be the fastest to validate object structure, it's almost 5 times faster than myzod, and over 14 times faster than zod. In the case of comprehensive content validation, Ajv is about 2 times faster than zod.
 
 ### Conclusions
-Myzod is fast, however the results mentioned in the library readme doesn't meet the reality. Today (end of November 2023) myzod is only 3 times faster than zod when validation object structure only. When it comes to the actual validation, myzod with combination of validator was slower than zod itself. These results suggest that zod got a lof faster over the last 3 years (results mentioned in myzod repo were added there in April 2020). 
-Should you use the fastest library? It depends... If your application needs to process thousands of requests per second, I'd use Ajv. In other cased zod is my preferred solution as it integrates very nicely with the Typescript ecosystem. Having types generated based on a validation schema helps to avoid unnecessary code duplication within a project. You only need to modify the object schema, and types are getting automatically changed as well.
+Results mentioned in the myzod documentation don't meet reality. As of today (November 2023), myzod is only 3 times faster than zod when validating object structure only. When it comes to the actual validation, myzod (with validator) was slower than zod itself. These results suggest that zod got a lof faster over the last 3 years (results mentioned in myzod repo were added there in April 2020). 
+Should you use the fastest library? It depends on your needs. If your application requires the processing of thousands of requests per second, I would recommend using Ajv. In other cases, Zod is my favorite solution because it works well with the Typescript ecosystem. Having types generated based on a validation schema helps to avoid code duplication within a project. You only need to change the object schema, and types are automatically changed.
