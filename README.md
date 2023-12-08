@@ -3,7 +3,7 @@
 ### Intro
 It is crucial to verify that the user's input matches the business requirements. Validating input data is one of the most common tasks that all software performs in the background.
 During my career, I've worked with multiple libraries, all of which serve a similar purpose:  validate if input matches the required criteria.  
-A few years ago, I worked on a project that used a library called myzod. I knew zod by that time, but I had never heard of myzod. I looked it up on npmjs and GitHub. It was a small library, with only one person maintaining it. It had over 100 stars and thousands of downloads every month. I was surprised that this library was chosen because other options seemed more popular and stable. I've asked the team members why they picked this particular library — it's for performance, they said. Author of myzod states that their solution is about 25 times faster than zod and 6 times faster than Joi. Those results were benchmarked on Node 13. As of today (November 2023), Node 20 is the latest LTS version of Node.js. Zod and Joi are being actively developed while myzod seems to be less maintained. I've decided to perform my own benchmarks to check if myzod is still a faster option. 
+A few years ago, I worked on a project that used a library called myzod. I knew zod by that time, but I had never heard of myzod. I looked it up on npmjs and GitHub. It was a small library, with only one person maintaining it. It had over 100 stars and thousands of downloads every month. I was surprised that this library was chosen because other options seemed more popular and stable. I've asked the team members why they picked this particular library — it's for performance, they said. Author of myzod states that their solution is about 25 times faster than zod and 6 times faster than Joi. Those validators were benchmarked on Node 13. As of today (November 2023), Node 20 is the latest LTS version of Node.js. Zod and Joi are being actively developed while myzod seems to be less maintained. I've decided to perform my own benchmarks to check if myzod is still a faster option. 
 
 ### Tested libraries
 * [ajv](https://www.npmjs.com/package/ajv/v/8.12.0) (with [ajv-formats](https://www.npmjs.com/package/ajv-formats/v/2.1.1))
@@ -12,7 +12,7 @@ A few years ago, I worked on a project that used a library called myzod. I knew 
 * [zod](https://www.npmjs.com/package/zod/v/3.22.4)
 * [myzod](https://www.npmjs.com/package/myzod/v/1.10.2) (with [validator](https://www.npmjs.com/package/validator/v/13.11.0))
 
-One note about the myzod library - it does not have refined string validation built-in: "Myzod is not interested in reimplementing all possible string validations, i.e. isUUID, isEmail, isAlphaNumeric, etc. The myzod string validation can be easily extended via the "withPredicate API". Implemented benchmarks use [validator](https://www.npmjs.com/package/validator) library because it is used in myzod examples.
+One note about the myzod library - it does not have refined string validation built-in: "Myzod is not interested in reimplementing all possible string validations, i.e. isUUID, isEmail, isAlphaNumeric, etc. The myzod string validation can be easily extended via the `withPredicate` API". Implemented benchmarks use [validator](https://www.npmjs.com/package/validator) library because it is used in myzod examples.
 
 ### Benchmark implementation
 Two variants were checked:
@@ -51,14 +51,13 @@ Cronometro outputs summarized test results in a table. More details can be obtai
 
 #### Types only validation
 
-| **Slower tests** | **Samples** | **Result**        | **Tolerance** |
-|------------------|-------------|-------------------|---------------|
-| yup              | 10000000    | 120386.86 op/sec  | ± 0.02 %      |
-| joi              | 10000000    | 416051.57 op/sec  | ± 0.05 %      |
-| zod              | 10000000    | 1177593.99 op/sec | ± 0.07 %      |
-| myzod            | 10000000    | 3419450.10 op/sec | ± 0.02 %      |
-| **Fastest test** | **Samples** | **Result**        | **Tolerance** |
-| ajv              | 10000000    | 1712090.05 op/sec | ± 0.14 %      |
+| **Validator**    | **Samples** | **Result**         | **Tolerance** | **Ratio**|
+|------------------|-------------|--------------------|---------------|----------|
+| ajv              | 10000000    | 16431153.46 op/sec | ± 0.14 %      |1.0       |
+| myzod            | 10000000    | 3419450.10 op/sec  | ± 0.02 %      |0.2       |
+| zod              | 10000000    | 1177593.99 op/sec  | ± 0.07 %      |0.07      |
+| joi              | 10000000    | 416051.57 op/sec   | ± 0.05 %      |0.025     |
+| yup              | 10000000    | 120386.86 op/sec   | ± 0.02 %      |0.007     |
 
 ![Time to validate an object](results/types-only.svg)
 
