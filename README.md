@@ -51,7 +51,7 @@ Cronometro outputs summarized test results in a table. More details can be obtai
 
 #### Types only validation
 
-| **Slower tests** | **Samples** | **Result**         | **Tolerance** | **Ratio**|
+| **Validator**    | **Samples** | **Result**         | **Tolerance** | **Ratio**|
 |------------------|-------------|--------------------|---------------|----------|
 | ajv              | 10000000    | 16431153.46 op/sec | ± 0.14 %      |1.0       |
 | myzod            | 10000000    | 3419450.10 op/sec  | ± 0.02 %      |0.2       |
