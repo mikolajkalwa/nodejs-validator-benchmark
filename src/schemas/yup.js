@@ -1,4 +1,8 @@
 import yup from 'yup'
+import validator from 'validator'
+
+// NOTE: seems like yup itself don't support validation ISO String date in strict mode
+// https://github.com/jquense/yup/issues/1218
 
 export const baseSchema = yup.object().shape({
   name: yup.object().shape({
@@ -23,5 +27,5 @@ export const detailsSchema = yup.object().shape({
     password: yup.string().min(12).max(50)
   }),
   organization_id: yup.string().uuid(),
-  requested_at: yup.date()
+  requested_at: yup.string().test(validator.isISO8601)
 })
