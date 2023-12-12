@@ -49,7 +49,7 @@ In `comprehensive validation` scenario, it is additionally checked if:
 * yup was not able to correctly validate value of `requested_at` field out of the box . When using `yup.date` method, yup tries to perform the validation by passing the input into the `Date` constructor. It results in a faulty validation. For example, string of value: `"1"` is transformed to Date object `2000-12-31T23:00:00.000Z`. Trying to resolve this behaviuour by enabling strict validation (which disables the casting) results in failed validation in case of string fullfiling the requierements of ISO 8601 norm. In order to properly validate content of `requested_at` I decided to combine `yup.string` with `isISO8601` from `validator` library.
 
 ### Results
-Cronometro outputs summarized test results in a table. More details can be obtained from the results object using the API. Since the benchmark included 10 000 000 samples and the results were quite stable (worst-case tolerance was ± 0.15 %), I'll focus on the average time needed to validate an object.
+Cronometro outputs summarized test results in a table. More details can be obtained from the results object using the API. Benchmark included 10 000 000 samples and the results were stable.
 
 #### Types only validation
 
@@ -74,16 +74,62 @@ Cronometro outputs summarized test results in a table. More details can be obtai
 | zod              | 928 734 op/sec   | ± 0.03 %      | + 464.00 %                  |
 | ajv              | 2 213 050 op/sec | ± 0.04 %      | + 1243.95 %                 |
 
+![Comprehensive validation](results/single-comprehensive.svg)
 
-In case of only validating the object structure, myzod is about 8 times faster than Joi and almost 3 times faster than zod. However, in case of comprehensive validation, myzod is 4 times faster than Joi and about 2 times slower than zod. I understand that the performance of the validator library greatly influenced the results of this test, but as I mentioned earlier, myzod does not include sophisticated validation methods out of the box.  
-Ajv turned to be the fastest to validate object structure, it's almost 5 times faster than myzod, and over 14 times faster than zod. In the case of comprehensive content validation, Ajv is about 2 times faster than zod.
+In case of only validating the object structure, myzod is about 6 times faster than Joi and almost 3.5 times faster than zod. However, in case of comprehensive validation, myzod is 4 times faster than Joi and almost 2 times slower than zod. I understand that the performance of the validator library greatly influenced the results of this test, but as I mentioned earlier, myzod does not include sophisticated validation methods out of the box.  
+Ajv turned to be the fastest to validate object structure, it's 5 times faster than myzod, and 18 times faster than zod. In the case of comprehensive content validation, Ajv is over 2 times faster than zod.
 
 ### First conclusions
-Results mentioned in the myzod documentation don't meet reality. As of today (November 2023), myzod is only 3 times faster than zod when validating object structure only. When it comes to the actual validation, myzod (with validator) was slower than zod itself. These results suggest that zod got a lot faster over the last 3 years (results mentioned in myzod repo were added there in April 2020). 
-Should you use the fastest library? It depends on your needs. If your application requires the processing of thousands of requests per second, I would recommend using Ajv. In other cases, Zod is my favorite solution because it works well with the Typescript ecosystem. Having types generated based on a validation schema helps to avoid code duplication within a project. You only need to change the object schema, and types are automatically changed.
+Results mentioned in the myzod documentation don't meet reality. As of today (November 2023), myzod is only 3 to 4 times faster than zod when validating object structure only. When it comes to the actual validation, myzod (with validator) was slower than zod itself. These results suggest that zod got a lot faster over the last 3 years (results mentioned in myzod repo were added there in April 2020). 
 
 ### Additional round of benchmarking
+After performing those benchmarks I've decided to perform additional test, in which instead of performing 10 000 000 validation round on the same object, I've performed 10 000 iterations on 1 000 objects. Object were generated using [faker library](https://www.npmjs.com/package/@faker-js/faker/v/8.3.1), they had the same structure as the original object.
+```js
+const users = []
 
+for (let i = 0; i < 1000; i++) {
+  users.push({
+    name: {
+      first: faker.person.firstName(),
+      last: faker.person.lastName()
+    },
+    login: {
+      email: faker.internet.email(),
+      password: faker.internet.password({ length: getRandomInt(12, 50) })
+    },
+    organization_id: faker.string.uuid(),
+    requested_at: faker.date.anytime().toISOString()
+  })
+}
+```
 #### Results
+Results are seems to correspond to the previous test - with the exception of Ajv. In case of validating only the object structure (without the actual content) it performed better. In the first benchmark it took Ajv on avarage 42ns to validate an object. In this scenario Ajv needed 14175ns to validate 1 000 objects. It 14 ns per object, about 4 times faster than in the previous case.
+#### Types only validation
+
+| **Slower tests** | **Result**    | **Tolerance** | **Difference with slowest** |
+|------------------|---------------|---------------|-----------------------------|
+| yup              | 299 op/sec    | ± 0.01 %      |                             |
+| joi              | 769 op/sec    | ± 0.03 %      | + 157.05 %                  |
+| zod              | 1 721 op/sec  | ± 0.05 %      | + 475.23 %                  |
+| myzod            | 5 460 op/sec  | ± 0.05 %      | + 1725.14 %                 |
+| ajv              | 70 548 op/sec | ± 0.32 %      | + 23480.25 %                |
+
+![Types only validation](results/many-types-only.svg)
+
+
+#### Comprehensive validation
+
+| **Slower tests** | **Result**  | **Tolerance** | **Difference with slowest** |
+|------------------|-------------|---------------|-----------------------------|
+| joi              | 152 op/sec  | ± 0.01 %      |                             |
+| yup              | 226 op/sec  | ± 0.01 %      | + 49.03 %                   |
+| myzod            | 469 op/sec  | ± 0.02 %      | + 209.19 %                  |
+| zod              | 970 op/sec  | ± 0.03 %      | + 539.62 %                  |
+| ajv              | 1988 op/sec | ± 0.04 %      | + 1210.65 %                 |
+
+![Comprehensive validation](results/many-comprehensive.svg)
+
+
 
 ### Final conclusions
+Should you use the fastest library? It depends on your needs. If your application requires the processing of thousands of requests per second, I would recommend using Ajv. In other cases, Zod is my favorite solution because it works well with the Typescript ecosystem. Having types generated based on a validation schema helps to avoid code duplication within a project. You only need to change the object schema, and types are automatically changed.

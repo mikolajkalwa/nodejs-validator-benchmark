@@ -13,15 +13,14 @@ console.log('ajv details', ajv.detailsSchema(user))
 console.log('joi base', !joi.baseSchema.validate(user).error)
 console.log('joi details', !joi.detailsSchema.validate(user).error)
 
-console.log('myzod base', myzod.baseSchema.try(user) instanceof Error ? false : true)
-console.log('myzod details', myzod.detailsSchema.try(user) instanceof Error ? false : true)
+console.log('myzod base', !(myzod.baseSchema.try(user) instanceof Error))
+console.log('myzod details', !(myzod.detailsSchema.try(user) instanceof Error))
 
 console.log('yup base', yup.baseSchema.isValidSync(user, { strict: true }))
 console.log('yup details', yup.detailsSchema.isValidSync(user, { strict: true }))
 
 console.log('zod base', !zod.baseSchema.safeParse(user).error)
 console.log('zod details', !zod.detailsSchema.safeParse(user).error)
-
 
 console.log('Many objects bench, check if all objects pass the validation')
 console.log('ajv base', users.map(user => ajv.baseSchema(user)).every(result => result === true))
